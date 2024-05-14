@@ -3,54 +3,48 @@
 #include <fstream>
 using namespace std;
 
+void removeSpecialCharacters(string s)
+{
+}
+
 int main()
 {
-    int br_uc;
-    cin >> br_uc;
-    cin.ignore();
-    string prezimeIme[101];
+    int n, br = 0;
     double prosjek[101];
-    for (int i = 0; i < br_uc; i++)
+    string prezimeIme[101];
+    string linija;
+    fstream datoteka;
+    datoteka.open("C:\\Users\\Ga-gama\\Documents\\GitHub\\GitHub-Test\\imenik.bin", ios::binary | ios::out);
+    while (getline(datoteka, linija))
+    {
+        cout << linija << endl;
+        prosjek[br] = stoi(linija);
+        br++;
+    }
+    datoteka.close();
+    cin >> n;
+    cin.ignore();
+    for (int i = 0; i < n; i++)
     {
         cin >> prosjek[i];
-        cin.ignore();
-        getline(cin, prezimeIme[i]);
+        getline(cin, prezimeIme[i + br]);
     }
-    for (int i = 0; i < br_uc; i++)
+    for (int i = 0; i < n + br; i++)
     {
-        for (int j = i + 1; j < br_uc; j++)
+        for (int j = i + 1; j < n + br; j++)
         {
-            if (prosjek[i] < prosjek[j])
+            if (prosjek[i] > prosjek[j])
             {
                 swap(prosjek[i], prosjek[j]);
                 swap(prezimeIme[i], prezimeIme[j]);
             }
         }
     }
-    fstream datotekaOut("D:\\DOWNLOAD\\VS_Code\\GitHub-Test\\imenik.bin", ios::binary | ios::out);
-    for (int i = 0; i < br_uc; i++)
+    datoteka.open("C:\\Users\\Ga-gama\\Documents\\GitHub\\GitHub-Test\\imenik.bin", ios::binary | ios::in | ios::trunc);
+    for (int i = 0; i < n + br; i++)
     {
-        datotekaOut.write((char *)&prosjek[i], sizeof(double));
-        int len = prezimeIme[i].size();
-        datotekaOut.write((char *)&len, sizeof(int));
-        datotekaOut.write((char *)&prezimeIme[i], sizeof(string));
+        datoteka << prosjek[i] << prezimeIme[i] << endl;
     }
-    datotekaOut.close();
-    fstream datotekaIn("D:\\DOWNLOAD\\VS_Code\\GitHub-Test\\imenik.bin", ios::binary | ios::in);
-    for (int i = 0; i < br_uc; i++)
-    {
-        string prezime_ime;
-        double prosjek;
-        datotekaIn.read((char *)&prosjek, sizeof(double));
-        int len;
-        datotekaIn.read((char *)&len, sizeof(int));
-        char *buffer = new char[len + 1];
-        datotekaIn.read(buffer, len);
-        buffer[len] = '\0';
-        prezime_ime = buffer;
-        delete[] buffer;
-        cout << prezime_ime << " " << prosjek << endl;
-    }
-    datotekaIn.close();
+    datoteka.close();
     return 0;
 }
