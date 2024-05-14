@@ -5,6 +5,17 @@ using namespace std;
 
 void removeSpecialCharacters(string s)
 {
+    for (int i = 0; i < s.size(); i++)
+    {
+        if (s[i] < 'A' || s[i] > 'Z' && s[i] < 'a' || s[i] > 'z')
+        {
+            if (s[i] != ' ')
+            {
+                s.erase(i, 1);
+                i--;
+            }
+        }
+    }
 }
 
 int main()
@@ -19,6 +30,8 @@ int main()
     {
         cout << linija << endl;
         prosjek[br] = stoi(linija);
+        removeSpecialCharacters(linija);
+        prezimeIme[br] = linija;
         br++;
     }
     datoteka.close();
@@ -26,7 +39,8 @@ int main()
     cin.ignore();
     for (int i = 0; i < n; i++)
     {
-        cin >> prosjek[i];
+        cin >> prosjek[i + br];
+        cin.ignore();
         getline(cin, prezimeIme[i + br]);
     }
     for (int i = 0; i < n + br; i++)
@@ -40,10 +54,12 @@ int main()
             }
         }
     }
-    datoteka.open("C:\\Users\\Ga-gama\\Documents\\GitHub\\GitHub-Test\\imenik.bin", ios::binary | ios::in | ios::trunc);
+    datoteka.open("C:\\Users\\Ga-gama\\Documents\\GitHub\\GitHub-Test\\imenik.bin", ios::binary | ios::in);
     for (int i = 0; i < n + br; i++)
     {
-        datoteka << prosjek[i] << prezimeIme[i] << endl;
+        datoteka << prosjek[i];
+        datoteka << prezimeIme[i];
+        datoteka << endl;
     }
     datoteka.close();
     return 0;
