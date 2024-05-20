@@ -1,66 +1,42 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <algorithm>
 using namespace std;
 
-void removeSpecialCharacters(string s)
+struct Ucenik
 {
-    for (int i = 0; i < s.size(); i++)
-    {
-        if (s[i] < 'A' || s[i] > 'Z' && s[i] < 'a' || s[i] > 'z')
-        {
-            if (s[i] != ' ')
-            {
-                s.erase(i, 1);
-                i--;
-            }
-        }
-    }
+    char imePrezime[50];
+    float prosjek;
+};
+
+bool cmp(Ucenik &a, Ucenik &b)
+{
+    return a.prosjek > b.prosjek;
 }
 
 int main()
 {
-    int n, br = 0;
-    double prosjek[101];
-    string prezimeIme[101];
-    string linija;
-    fstream datoteka;
-    datoteka.open("C:\\Users\\Ga-gama\\Documents\\GitHub\\GitHub-Test\\imenik.bin", ios::binary | ios::out);
-    while (getline(datoteka, linija))
+    struct Ucenik ucenici[100];
+    int brUcenika = 0;
+    fstream datoteka1("C:\\Users\\Ga-gama\\Documents\\GitHub\\GitHub-Test\\imenik.bin", ios::binary | ios::in);
+    while (datoteka1.read((char *)&ucenici[brUcenika], sizeof(Ucenik)))
     {
-        cout << linija << endl;
-        prosjek[br] = stoi(linija);
-        removeSpecialCharacters(linija);
-        prezimeIme[br] = linija;
-        br++;
+        cout << ucenici[brUcenika].imePrezime << " " << ucenici[brUcenika].prosjek << endl;
+        brUcenika++;
     }
-    datoteka.close();
+    datoteka1.close();
+    int n;
     cin >> n;
-    cin.ignore();
     for (int i = 0; i < n; i++)
     {
-        cin >> prosjek[i + br];
         cin.ignore();
-        getline(cin, prezimeIme[i + br]);
+        cin.getline(ucenici[brUcenika + i].imePrezime, 50);
+        cin >> ucenici[brUcenika + i].prosjek;
     }
-    for (int i = 0; i < n + br; i++)
-    {
-        for (int j = i + 1; j < n + br; j++)
-        {
-            if (prosjek[i] > prosjek[j])
-            {
-                swap(prosjek[i], prosjek[j]);
-                swap(prezimeIme[i], prezimeIme[j]);
-            }
-        }
-    }
-    datoteka.open("C:\\Users\\Ga-gama\\Documents\\GitHub\\GitHub-Test\\imenik.bin", ios::binary | ios::in);
-    for (int i = 0; i < n + br; i++)
-    {
-        datoteka << prosjek[i];
-        datoteka << prezimeIme[i];
-        datoteka << endl;
-    }
-    datoteka.close();
+    sort(ucenici, ucenici + brUcenika + n, cmp);
+    fstream datoteka2("C:\\Users\\Ga-gama\\Documents\\GitHub\\GitHub-Test\\imenik.bin", ios::binary | ios::out | ios::trunc);
+    datoteka2.write((char *)ucenici, sizeof(Ucenik) * (brUcenika + n));
+    datoteka2.close();
     return 0;
 }
